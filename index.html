@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>房屋租赁安全责任书 - 在线签署</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root{--bg:#FAF8F5;--fg:#1A1A1A;--muted:#8C8078;--accent:#C53030;--accent-light:#FEE2E2;--gold:#B7791F;--border:#E8E0D8;}
+        *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+        body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--fg);margin:0;padding:0;}
+        h1,h2,h3,h4{font-family:'Noto Serif SC',serif;}
+        .sig-canvas{border:2px dashed var(--border);border-radius:16px;cursor:crosshair;touch-action:none;background:#fff;transition:all .3s;width:100%}
+        .sig-canvas.drawing{border-color:var(--accent);box-shadow:0 0 0 4px rgba(197,48,48,.1)}
+        .sig-canvas.signed{border-color:#16A34A;border-style:solid;box-shadow:0 0 0 4px rgba(22,163,74,.08)}
+        .upload-card{background:#fff;border:2px dashed var(--border);border-radius:16px;transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+        .upload-card:active{transform:scale(.98)}
+        .upload-card.uploaded{border-color:#16A34A;border-style:solid;background:rgba(22,163,74,.02)}
+        .preview-img{max-width:100%;max-height:200px;border-radius:10px;object-fit:contain}
+        .tip-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 10px;border-radius:20px}
+        .doc-scroll{max-height:45vh;overflow-y:auto;padding:24px;background:#fff;border-radius:16px;border:1px solid var(--border);line-height:2;font-size:14px;-webkit-overflow-scrolling:touch}
+        .doc-scroll::-webkit-scrollbar{width:3px}
+        .doc-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+        @keyframes longPressHint{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+        .anim-in{animation:fadeUp .4s ease forwards}
+        .toast-box{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-120px);padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:9999;transition:transform .35s ease;box-shadow:0 8px 24px rgba(0,0,0,.15);max-width:90vw;text-align:center}
+        .toast-box.show{transform:translateX(-50%) translateY(0)}
+        .toast-box.success{background:#16A34A;color:#fff}
+        .toast-box.error{background:#DC2626;color:#fff}
+        .toast-box.info{background:var(--gold);color:#fff}
+        .seal{display:inline-block;border:3px solid var(--accent);color:var(--accent);padding:8px 20px;border-radius:8px;font-family:'Noto Serif SC',serif;font-weight:900;font-size:20px;transform:rotate(-8deg);opacity:.8;letter-spacing:6px}
+        .btn-primary{background:var(--accent);color:#fff;padding:16px 36px;border-radius:14px;font-weight:700;font-size:16px;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+        .btn-primary:active{transform:scale(.98)}
+        .btn-primary:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none}
+        .btn-ghost{background:transparent;color:var(--accent);padding:10px 20px;border-radius:10px;font-weight:600;font-size:13px;border:1.5px solid var(--accent);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;width:100%}
+        .btn-ghost:active{transform:scale(.98)}
+        .form-input{width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;transition:all .2s;outline:none}
+        .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(197,48,48,.08)}
+        .form-input::placeholder{color:var(--muted);opacity:.6}
+        .section-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;font-family:'Noto Serif SC',serif}
+        .photo-guide{width:64px;height:80px;border:2px dashed var(--border);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:10px;gap:3px;flex-shrink:0}
+        .check-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;border-bottom:1px solid #f5f0eb}
+        .check-item:last-child{border-bottom:none}
+        .check-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all .3s}
+        .check-icon.done{background:#16A34A;color:#fff}
+        .check-icon.undone{background:var(--border);color:var(--muted)}
+        body::before{content:'';position:fixed;top:-40%;right:-20%;width:70vw;height:70vw;background:radial-gradient(circle,rgba(197,48,48,.03)0%,transparent 60%);pointer-events:none;z-index:0}
+        .overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+        .overlay .inner{background:#fff;border-radius:20px;padding:36px 40px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .spinner{width:36px;height:36px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+        @media(max-width:640px){.doc-scroll{max-height:38vh;padding:18px}}
+    </style>
+</head>
+<body class="min-h-screen relative">
+<div id="toast" class="toast-box"></div>
+
+<div id="main-page" class="relative z-10 max-w-2xl mx-auto px-4 pt-5 pb-12">
+    <header class="text-center mb-6 anim-in">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-500 mb-3 shadow-lg shadow-brand-500/20"><i class="fa-solid fa-file-signature text-white text-xl"></i></div>
+        <h1 class="text-2xl font-black text-warm-900 mb-1 tracking-wide">房屋租赁安全责任书</h1>
+        <p class="text-sm text-warm-400">请依次完成以下步骤进行在线签署</p>
+    </header>
+
+    <section class="mb-6 anim-in" style="animation-delay:.05s">
+        <div class="flex items-center gap-3 mb-4"><div class="section-num bg-brand-500 text-white">壹</div><div><h2 class="text-base font-bold text-warm-900">填写基本信息</h2></div></div>
+        <div class="bg-white rounded-2xl border border-warm-200 p-4 sm:p-5 space-y-4 shadow-sm">
+            <div><label class="block text-sm font-semibold text-warm-700 mb-1.5"><i class="fa-solid fa-location-dot text-brand-500 mr-1"></i>房屋地址 <span class="text-brand-500">*</span></label><input id="f-address" type="text" placeholder="例：北京市朝阳区xx路xx号xx室" class="form-input"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="block text-sm font-semibold text-warm-700 mb-1.5">起始日期 <span class="text-brand-500">*</span></label><input id="f-start" type="date" class="form-input"></div>
+                <div><label class="block text-sm font-semibold text-warm-700 mb-1.5">截止日期 <span class="text-brand-500">*</span></label><input id="f-end" type="date" class="form-input"></div>
+            </div>
+            <div class="border-t border-warm-100 pt-4">
+                <p class="text-sm font-bold text-warm-800 mb-2 flex items-center gap-2"><span class="w-5 h-5 rounded bg-brand-500 text-white flex items-center justify-center text-[10px] font-bold">甲</span>甲方（出租方 / 房东）</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><input id="f-landlord" type="text" placeholder="房东姓名" class="form-input"></div>
+                    <div><input id="f-landlord-id" type="text" placeholder="身份证号" class="form-input"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <div><input id="f-llphone" type="tel" placeholder="手机号码" class="form-input"></div>
+                    <div><input id="f-llphone-id" type="tel" placeholder="联系电话" class="form-input"></div>
+                </div>
+            </div>
+            <div class="border-t border-warm-100 pt-4">
+                <p class="text-sm font-bold text-warm-800 mb-2 flex items-center gap-2"><span class="w-5 h-5 rounded bg-gold-500 text-white flex items-center justify-center text-[10px] font-bold">乙</span>乙方（承租方 / 租客）</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><input id="f-tenant" type="text" placeholder="租客姓名" class="form-input"></div>
+                    <div><input id="f-tenant-id" type="text" placeholder="身份证号" class="form-input"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <div><input id="f-tphone" type="tel" placeholder="手机号码" class="form-input"></div>
+                    <div><input id="f-tphone-id" type="tel" placeholder="联系电话" class="form-input"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-6 anim-in" style="animation-delay:.1s">
+        <div class="flex items-center gap-3 mb-4"><div class="section-num bg-brand-500 text-white">贰</div><div><h2 class="text-base font-bold text-warm-900">阅读安全责任书</h2></div></div>
+        <div id="doc-content" class="doc-scroll mb-3" onscroll="checkDocScroll()"><div id="doc-text"></div></div>
+        <div id="scroll-status" class="text-xs text-center mb-2 py-1.5 rounded-lg transition-all" style="background:#FEF2F2;color:#C53030"><i class="fa-solid fa-arrow-down mr-1"></i>请先滚动阅读完整份责任书</div>
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-warm-50 border border-warm-200">
+            <input type="checkbox" id="doc-read-check" onchange="checkCanSubmit()" class="w-5 h-5 rounded accent-brand-500 flex-shrink-0">
+            <label for="doc-read-check" class="text-sm text-warm-700 cursor-pointer select-none">我已仔细阅读并理解以上全部内容</label>
+        </div>
+    </section>
+
+    <section class="mb-6 anim-in" style="animation-delay:.15s">
+        <div class="flex items-center gap-3 mb-4"><div class="section-num bg-brand-500 text-white">叁</div><div><h2 class="text-base font-bold text-warm-900">手写签名</h2></div></div>
+        <div class="bg-white rounded-2xl border border-warm-200 p-4 sm:p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-2"><span class="text-sm font-semibold text-warm-700">甲方（房东）签名</span><button onclick="clearSignature()" class="text-xs px-3 py-1 rounded-lg border border-warm-200 text-warm-400 active:bg-warm-100"><i class="fa-solid fa-eraser mr-1"></i>重签</button></div>
+            <canvas id="sig-canvas" class="sig-canvas" height="160"></canvas>
+            <p id="sig-hint" class="text-xs text-warm-300 mt-1.5 text-center">请在此区域签名</p>
+        </div>
+    </section>
+
+    <section class="mb-6 anim-in" style="animation-delay:.2s">
+        <div class="flex items-center gap-3 mb-4"><div class="section-num bg-brand-500 text-white">肆</div><div><h2 class="text-base font-bold text-warm-900">上传证件照片</h2></div></div>
+        <div class="space-y-4" id="upload-sections"></div>
+    </section>
+
+    <section class="mb-6 anim-in" style="animation-delay:.25s">
+        <div class="bg-white rounded-2xl border border-warm-200 p-4 sm:p-5 shadow-sm">
+            <div class="mb-4 p-3 rounded-xl bg-warm-50 border border-warm-200">
+                <div>
+                    <div class="check-item"><div class="check-icon undone" id="chk-fields"><i class="fa-solid fa-check"></i></div><span>填写基本信息</span></div>
+                    <div class="check-item"><div class="check-icon undone" id="chk-doc"><i class="fa-solid fa-check"></i></div><span>阅读责任书并确认</span></div>
+                    <div class="check-item"><div class="check-icon undone" id="chk-sig"><i class="fa-solid fa-check"></i></div><span>完成手写签名</span></div>
+                    <div class="check-item"><div class="check-icon undone" id="chk-agree"><i class="fa-solid fa-check"></i></div><span>勾选法律确认</span></div>
+                </div>
+            </div>
+            <div class="flex items-start gap-3 mb-4 p-3 rounded-xl bg-brand-50 border border-brand-100">
+                <input type="checkbox" id="agree-check" onchange="checkCanSubmit()" class="w-5 h-5 mt-0.5 rounded accent-brand-500 flex-shrink-0">
+                <label for="agree-check" class="text-sm text-warm-700 leading-relaxed cursor-pointer select-none">本人确认以上信息真实有效，自愿签署本安全责任书，并承担相应法律责任。</label>
+            </div>
+            <button id="btn-submit" onclick="submitSign()" disabled class="btn-primary"><i class="fa-solid fa-paper-plane"></i> 确认签署</button>
+        </div>
+    </section>
+</div>
+
+<div id="gen-loading" class="overlay" style="display:none"><div class="inner"><div class="spinner"></div><p class="text-sm font-semibold text-warm-700">正在生成签署凭证...</p></div></div>
+
+<div id="result-page" class="hidden relative z-10 max-w-2xl mx-auto px-4 pt-5 pb-16">
+    <div class="text-center mb-5 anim-in">
+        <div class="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-check text-3xl text-green-600"></i></div>
+        <div class="seal mb-2">签署完成</div>
+        <h2 class="text-xl font-black text-warm-900 mb-1">安全责任书签署成功</h2>
+        <p id="result-time" class="text-sm text-warm-400"></p>
+    </div>
+
+    <div id="save-tip-wechat" class="hidden mb-4 p-4 rounded-xl bg-green-50 border border-green-200 anim-in">
+        <p class="text-sm font-bold text-green-800 mb-1"><i class="fa-brands fa-weixin mr-1"></i>请长按下方图片保存</p>
+        <p class="text-sm text-green-700">长按图片 → 选择「保存图片」→ 保存到手机相册</p>
+        <div class="mt-2 flex items-center gap-2 text-xs text-green-600"><i class="fa-solid fa-hand-pointer" style="animation:longPressHint 1.5s ease infinite"></i><span>长按图片即可保存</span></div>
+    </div>
+    <div id="save-tip-browser" class="hidden mb-4 p-4 rounded-xl bg-blue-50 border border-blue-200 anim-in">
+        <p class="text-sm font-bold text-blue-800 mb-1"><i class="fa-solid fa-globe mr-1"></i>保存签署凭证</p>
+        <p class="text-sm text-blue-700">可长按/右键保存图片，也可下载PDF文件</p>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-warm-200 p-2 shadow-sm mb-5 anim-in" style="animation-delay:.1s"><img id="result-img" class="w-full rounded-lg" alt="签署凭证"></div>
+
+    <div class="space-y-3 anim-in" style="animation-delay:.2s">
+        <button id="btn-download-pdf" onclick="downloadPDF()" class="btn-primary"><i class="fa-solid fa-file-pdf"></i> 下载PDF文件</button>
+        <button onclick="redo()" class="btn-ghost"><i class="fa-solid fa-rotate-left"></i> 重新签署</button>
+    </div>
+
+    <div id="result-info" class="mt-5 bg-warm-50 rounded-xl p-4 text-sm space-y-2"></div>
+</div>
+
+<script>
+var state={docScrolled:false,sigDrawn:false,signatureData:null,uploadedFiles:{},formData:{},resultImageURL:null,pdfCanvas:null,isWechat:false};
+
+document.addEventListener('DOMContentLoaded',function(){
+    state.isWechat=/MicroMessenger/i.test(navigator.userAgent);
+    renderDocText();
+    renderUploadSections();
+    initSignatureCanvas();
+    var ids=['f-address','f-landlord','f-landlord-id','f-llphone','f-llphone-id','f-tenant','f-tenant-id','f-tphone','f-tphone-id','f-start','f-end'];
+    ids.forEach(function(id){
+        var el=document.getElementById(id);
+        el.addEventListener('input',checkCanSubmit);
+        el.addEventListener('change',checkCanSubmit);
+    });
+    checkCanSubmit();
+});
+
+function renderUploadSections(){
+    var items=[
+        {id:'id-front',icon:'fa-id-card',ic:'text-brand-500',title:'身份证正面（人像面）',guide:'人像面',desc:'拍摄身份证人像面，确保四角完整、文字清晰',tips:[{t:'四角拍全',ok:1},{t:'光线均匀',ok:1},{t:'避免模糊',ok:0}]},
+        {id:'id-back',icon:'fa-id-card',ic:'text-brand-500',title:'身份证反面（国徽面）',guide:'国徽面',desc:'拍摄身份证国徽面，确保有效期清晰可见',tips:[{t:'有效期清晰',ok:1},{t:'四角拍全',ok:1},{t:'避免遮挡',ok:0}]},
+        {id:'selfie',icon:'fa-user',ic:'text-gold-500',title:'手持身份证自拍',guide:'自拍',gs:'width:56px;height:72px',desc:'本人手持身份证人像面拍摄，脸部和证件信息需同时清晰',tips:[{t:'脸部清晰',ok:1},{t:'证件可读',ok:1},{t:'勿戴墨镜口罩',ok:0},{t:'勿用他人代拍',ok:0}]},
+        {id:'deed',icon:'fa-house',ic:'text-gold-500',title:'房产证照片',guide:'房产证',gs:'width:72px;height:56px',desc:'拍摄房产证关键信息页，确保产权人姓名、房屋地址清晰',tips:[{t:'姓名清晰',ok:1},{t:'地址完整',ok:1},{t:'避免反光',ok:0}]}
+    ];
+    var h='';
+    items.forEach(function(it){
+        var tips=it.tips.map(function(tip){return tip.ok?'<span class="tip-tag bg-green-50 text-green-700"><i class="fa-solid fa-check text-[10px]"></i> '+tip.t+'</span>':'<span class="tip-tag bg-red-50 text-red-600"><i class="fa-solid fa-xmark text-[10px]"></i> '+tip.t+'</span>';}).join('');
+        var capture=it.id==='selfie'?'user':'environment';
+        h+='<div class="bg-white rounded-2xl border border-warm-200 p-4 sm:p-5 shadow-sm">'+
+            '<div class="flex items-start gap-3 mb-3">'+
+                '<div class="photo-guide" style="'+(it.gs||'')+'"><i class="fa-solid '+it.icon+' text-base"></i><span>'+it.guide+'</span></div>'+
+                '<div class="flex-1 min-w-0"><h4 class="text-sm font-bold text-warm-900 mb-0.5"><i class="fa-solid '+it.icon+' '+it.ic+' mr-1"></i>'+it.title+'</h4><p class="text-xs text-warm-400 leading-relaxed mb-1.5">'+it.desc+'</p><div class="flex flex-wrap gap-1">'+tips+'</div></div>'+
+            '</div>'+
+            '<div class="upload-card p-3" id="zone-'+it.id+'" onclick="triggerUpload(\''+it.id+'\')">'+
+                '<input type="file" id="input-'+it.id+'" accept="image/*" capture="'+capture+'" class="hidden" onchange="handleUpload(this,\''+it.id+'\')">'+
+                '<div class="upload-placeholder text-center py-3"><i class="fa-solid fa-camera text-xl text-warm-300 mb-1"></i><p class="text-sm text-warm-400">点击拍照</p></div>'+
+                '<div class="upload-preview hidden"></div>'+
+            '</div></div>';
+    });
+    document.getElementById('upload-sections').innerHTML=h;
+}
+
+function buildDocBody(){
+    return '<p style="margin-top:12px;">为明确房屋租赁期间的安全责任，保障甲乙双方的合法权益和人身财产安全，根据《中华人民共和国民法典》《中华人民共和国消防法》及相关法律法规，甲乙双方在平等、自愿、公平的基础上，就房屋租赁安全事宜达成如下协议：</p>'+
+    '<p style="margin-top:14px;font-weight:700;">第一条　甲方安全责任</p><p>1.1 甲方应确保出租房屋的建筑结构安全，符合国家安全标准和居住使用条件，不存在危及人身安全的隐患。</p><p>1.2 甲方应保证房屋内的电气线路、燃气管道、给排水设施等设备安全可靠，并在交付前进行安全检查。</p><p>1.3 甲方应配备符合标准的灭火器等基本消防设施，并确保其可正常使用。</p><p>1.4 甲方发现房屋存在安全隐患时，应及时维修整改，不得拖延或推诿。</p><p>1.5 甲方不得将不符合安全居住条件的房屋出租。</p>'+
+    '<p style="margin-top:14px;font-weight:700;">第二条　乙方安全责任</p><p>2.1 乙方应安全、合理使用房屋及其附属设施，不得擅自改变房屋结构和用途。</p><p>2.2 乙方应遵守消防安全规定，不得在室内存放易燃易爆等危险物品。</p><p>2.3 乙方应规范使用电器和燃气设备，不得私拉乱接电线，离开时应关闭电源和燃气阀门。</p><p>2.4 乙方不得在房屋内进行任何违法活动。</p><p>2.5 乙方发现安全隐患时，应立即通知甲方并采取防护措施。</p><p>2.6 乙方不得将房屋转租、转借给他人使用。</p>'+
+    '<p style="margin-top:14px;font-weight:700;">第三条　消防安全特别约定</p><p>3.1 双方应严格遵守消防法规，共同维护房屋消防安全。</p><p>3.2 严禁在公共区域停放电动自行车或为电动自行车充电。</p><p>3.3 严禁在室内或阳台为电动自行车电池充电。</p><p>3.4 不得占用、堵塞、封闭疏散通道和安全出口。</p>'+
+    '<p style="margin-top:14px;font-weight:700;">第四条　燃气安全特别约定</p><p>4.1 使用燃气的房屋，乙方应按操作规范正确使用，用毕及时关闭阀门。</p><p>4.2 严禁私自改装燃气管道和设施。</p><p>4.3 发现燃气泄漏应立即开窗通风，不得使用明火或电器开关，撤离后拨打抢修电话。</p>'+
+    '<p style="margin-top:14px;font-weight:700;">第五条　用电安全特别约定</p><p>5.1 不得私拉乱接电线，不得使用不合格电器产品。</p><p>5.2 不得超负荷用电，不得使用老化破损的电线和插座。</p><p>5.3 离开房屋应关闭非必要电源，长期外出应关闭总电源。</p>'+
+    '<p style="margin-top:14px;font-weight:700;">第六条　安全检查与整改</p><p>6.1 甲方有权定期对房屋进行安全检查，但应提前通知乙方。</p><p>6.2 安全隐患由责任方负责整改。</p><p>6.3 收到安全隐患通知后应在7日内回复并采取措施。</p>'+
+    '<p style="margin-top:14px;font-weight:700;">第七条　违约责任</p><p>7.1 违约方应承担相应赔偿责任。</p><p>7.2 因违规使用导致安全事故的，由违规方承担全部责任。</p><p>7.3 严重违约的，对方有权解除合同并要求赔偿。</p>'+
+    '<p style="margin-top:14px;font-weight:700;">第八条　其他约定</p><p>8.1 本责任书与租赁合同具有同等法律效力。</p><p>8.2 未尽事宜可另行签订补充协议。</p><p>8.3 本责任书一式两份，甲乙双方各执一份，自签字之日起生效。</p><p>8.4 电子签名与手写签名具有同等法律效力。</p>';
+}
+function renderDocText(){
+    document.getElementById('doc-text').innerHTML='<div style="font-family:\'Noto Serif SC\',serif;color:#1A1A1A;line-height:2;font-size:14px;"><p style="text-align:center;font-size:18px;font-weight:900;margin-bottom:4px;">房屋租赁安全责任书</p><p style="text-align:center;font-size:11px;color:#8C8078;margin-bottom:14px;">合同编号：ZM-'+Date.now().toString(36).toUpperCase()+'</p><p><strong>甲方（出租方）：</strong>__________　　<strong>身份证号：</strong>__________</p><p><strong>联系电话：</strong>__________　　<strong>联系电话：</strong>__________</p><p><strong>乙方（承租方）：</strong>__________　　<strong>身份证号：</strong>__________</p><p><strong>联系电话：</strong>__________　　<strong>联系电话：</strong>__________</p><p><strong>房屋地址：</strong>__________</p><p><strong>租赁期限：</strong>____ 至 ____</p>'+buildDocBody()+'</div>';
+}
+
+function checkDocScroll(){var el=document.getElementById('doc-content');if(el.scrollTop+el.clientHeight>=el.scrollHeight-80&&!state.docScrolled){state.docScrolled=true;var s=document.getElementById('scroll-status');s.innerHTML='<i class="fa-solid fa-check-circle mr-1"></i>已阅读完毕';s.style.background='#F0FDF4';s.style.color='#16A34A';}checkCanSubmit();}
+
+var sigCanvas,sigCtx,isDrawing=false,lastX=0,lastY=0;
+function initSignatureCanvas(){setTimeout(function(){sigCanvas=document.getElementById('sig-canvas');if(!sigCanvas)return;var r=sigCanvas.getBoundingClientRect();if(r.width===0){setTimeout(initSignatureCanvas,300);return;}sigCanvas.width=r.width*2;sigCanvas.height=160*2;sigCanvas.style.height='160px';sigCtx=sigCanvas.getContext('2d');sigCtx.scale(2,2);sigCtx.lineWidth=2.5;sigCtx.lineCap='round';sigCtx.lineJoin='round';sigCtx.strokeStyle='#1A1A1A';
+sigCanvas.addEventListener('mousedown',function(e){isDrawing=true;var r=sigCanvas.getBoundingClientRect();lastX=e.clientX-r.left;lastY=e.clientY-r.top;sigCanvas.classList.add('drawing');});
+sigCanvas.addEventListener('mousemove',function(e){if(!isDrawing)return;var r=sigCanvas.getBoundingClientRect();drawSigLine(lastX,lastY,e.clientX-r.left,e.clientY-r.top);lastX=e.clientX-r.left;lastY=e.clientY-r.top;});
+sigCanvas.addEventListener('mouseup',sigEnd);sigCanvas.addEventListener('mouseleave',sigEnd);
+sigCanvas.addEventListener('touchstart',function(e){e.preventDefault();var t=e.touches[0],r=sigCanvas.getBoundingClientRect();lastX=t.clientX-r.left;lastY=t.clientY-r.top;isDrawing=true;sigCanvas.classList.add('drawing');},{passive:false});
+sigCanvas.addEventListener('touchmove',function(e){e.preventDefault();if(!isDrawing)return;var t=e.touches[0],r=sigCanvas.getBoundingClientRect();drawSigLine(lastX,lastY,t.clientX-r.left,t.clientY-r.top);lastX=t.clientX-r.left;lastY=t.clientY-r.top;},{passive:false});
+sigCanvas.addEventListener('touchend',sigEnd);sigCanvas.addEventListener('touchcancel',sigEnd);
+},200);}
+function sigEnd(){isDrawing=false;if(sigCanvas)sigCanvas.classList.remove('drawing');}
+function drawSigLine(x1,y1,x2,y2){sigCtx.beginPath();sigCtx.moveTo(x1,y1);sigCtx.lineTo(x2,y2);sigCtx.stroke();if(!state.sigDrawn){state.sigDrawn=true;sigCanvas.classList.remove('drawing');sigCanvas.classList.add('signed');document.getElementById('sig-hint').textContent='签名已录入';document.getElementById('sig-hint').classList.add('text-green-600');document.getElementById('sig-hint').classList.remove('text-warm-300');checkCanSubmit();}}
+function clearSignature(){if(!sigCtx)return;sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);state.sigDrawn=false;state.signatureData=null;sigCanvas.classList.remove('signed');document.getElementById('sig-hint').textContent='请在此区域签名';document.getElementById('sig-hint').classList.remove('text-green-600');document.getElementById('sig-hint').classList.add('text-warm-300');checkCanSubmit();}
+
+function triggerUpload(id){document.getElementById('input-'+id).click();}
+function handleUpload(input,id){var file=input.files[0];if(!file)return;if(file.size>20*1024*1024){showToast('图片不能超过20MB','error');return;}var reader=new FileReader();reader.onload=function(e){state.uploadedFiles[id]=e.target.result;var zone=document.getElementById('zone-'+id);zone.querySelector('.upload-placeholder').classList.add('hidden');var pv=zone.querySelector('.upload-preview');pv.classList.remove('hidden');pv.innerHTML='<div class="relative"><img src="'+e.target.result+'" class="preview-img mx-auto" alt="预览"><button onclick="event.stopPropagation();removeUpload(\''+id+'\')" class="absolute top-1 right-1 w-7 h-7 rounded-full bg-red-500 text-white text-xs flex items-center justify-center shadow"><i class="fa-solid fa-times"></i></button><p class="text-xs text-green-600 mt-1.5 text-center font-medium"><i class="fa-solid fa-check-circle mr-1"></i>已上传</p></div>';zone.classList.add('uploaded');};reader.readAsDataURL(file);}
+function removeUpload(id){delete state.uploadedFiles[id];var zone=document.getElementById('zone-'+id);zone.querySelector('.upload-placeholder').classList.remove('hidden');var pv=zone.querySelector('.upload-preview');pv.classList.add('hidden');pv.innerHTML='';zone.classList.remove('uploaded');document.getElementById('input-'+id).value='';}
+
+function checkCanSubmit(){var fk=['f-address','f-landlord','f-landlord-id','f-llphone','f-llphone-id','f-tenant','f-tenant-id','f-tphone','f-tphone-id','f-start','f-end'].every(function(id){return document.getElementById(id).value.trim()!=='';});var dk=document.getElementById('doc-read-check').checked&&state.docScrolled;var sk=state.sigDrawn;var ak=document.getElementById('agree-check').checked;document.getElementById('chk-fields').className=fk?'check-icon done':'check-icon undone';document.getElementById('chk-doc').className=dk?'check-icon done':'check-icon undone';document.getElementById('chk-sig').className=sk?'check-icon done':'check-icon undone';document.getElementById('chk-agree').className=ak?'check-icon done':'check-icon undone';document.getElementById('btn-submit').disabled=!(fk&&dk&&sk&&ak);}
+
+function submitSign(){var address=document.getElementById('f-address').value.trim(),landlord=document.getElementById('f-landlord').value.trim(),landlordId=document.getElementById('f-landlord-id').value.trim(),llphone=document.getElementById('f-llphone').value.trim(),llphoneId=document.getElementById('f-llphone-id').value.trim(),tenant=document.getElementById('f-tenant').value.trim(),tenantId=document.getElementById('f-tenant-id').value.trim(),tphone=document.getElementById('f-tphone').value.trim(),tphoneId=document.getElementById('f-tphone-id').value.trim(),startDate=document.getElementById('f-start').value,endDate=document.getElementById('f-end').value;if(!address||!landlord||!landlordId||!llphone||!llphoneId||!tenant||!tenantId||!tphone||!tphoneId||!startDate||!endDate){showToast('请填写所有必填信息','error');return;}if(!/^1\d{10}$/.test(llphone)&&!/^1\d{10}$/.test(llphoneId)){showToast('甲方电话或身份证号格式不正确','error');return;}if(!/^1\d{10}$/.test(tphone)&&!/^1\d{10}$/.test(tphoneId)){showToast('乙方电话或身份证号格式不正确','error');return;}if(!document.getElementById('doc-read-check').checked||!state.docScrolled){showToast('请先阅读责任书并确认','error');return;}if(!state.sigDrawn){showToast('请完成手写签名','error');return;}if(!document.getElementById('agree-check').checked){showToast('请勾选法律确认','error');return;}if(sigCanvas)state.signatureData=sigCanvas.toDataURL('image/png');var now=new Date(),pad=function(n){return String(n).padStart(2,'0')};state.formData={address:address,landlord:landlord,landlordId:landlordId,llphone:llphone,llphoneId:llphoneId,tenant:tenant,tenantId:tenantId,tphone:tphone,tphoneId:tphoneId,startDate:startDate,endDate:endDate,signTime:now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+' '+pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds()),signDate:now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日'};generateResult();}
+
+async function generateResult(){var d=state.formData;document.getElementById('gen-loading').style.display='flex';try{var container=document.createElement('div');container.style.cssText='position:fixed;top:0;left:0;width:794px;z-index:150;background:#fff;pointer-events:none;';container.innerHTML=buildResultHTML(d,state.signatureData,state.uploadedFiles);document.body.appendChild(container);var imgs=container.querySelectorAll('img');for(var i=0;i<imgs.length;i++){if(!imgs[i].complete){await new Promise(function(r){imgs[i].onload=r;imgs[i].onerror=r;});}}await new Promise(function(r){setTimeout(r,800);});var renderCanvas=await html2canvas(container,{scale:2,useCORS:true,backgroundColor:'#ffffff',width:794,windowWidth:794});document.body.removeChild(container);state.resultImageURL=renderCanvas.toDataURL('image/jpeg',0.92);state.pdfCanvas=renderCanvas;showResultPage(d);}catch(err){console.error(err);showToast('生成失败，请重试','error');document.getElementById('gen-loading').style.display='none';}}
+
+function buildResultHTML(d,sigData,files){
+    var sigHTML=sigData?'<img src="'+sigData+'" style="max-height:70px;margin-top:4px;" alt="签名">':'<span style="color:#8C8078;">（未签名）</span>';
+    var labels={'id-front':'身份证正面','id-back':'身份证反面','selfie':'手持身份证自拍','deed':'房产证'};
+    var photoHTML='<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;">';var hasP=false;
+    for(var k in labels){if(files[k]){hasP=true;photoHTML+='<div style="flex:0 0 calc(50% - 5px);background:#FAF8F5;border-radius:8px;padding:6px;border:1px solid #E8E0D8;"><p style="font-size:10px;color:#8C8078;margin:0 0 4px;font-weight:600;">'+labels[k]+'</p><img src="'+files[k]+'" style="width:100%;max-height:130px;object-fit:contain;border-radius:4px;"></div>';}}
+    if(!hasP)photoHTML+='<p style="font-size:12px;color:#8C8078;margin:0;padding:14px 0;text-align:center;width:100%;">（未上传证件照片）</p>';photoHTML+='</div>';
+    return '<div style="padding:36px 28px;font-family:\'Noto Serif SC\',\'Noto Sans SC\',serif;color:#1A1A1A;background:#fff;line-height:2;font-size:13px;"><div style="border:3px solid #C53030;border-radius:4px;padding:28px 24px;">'+
+    '<h1 style="text-align:center;font-size:20px;font-weight:900;margin:0 0 4px;letter-spacing:4px;">房屋租赁安全责任书</h1>'+
+    '<p style="text-align:center;font-size:10px;color:#8C8078;margin:0 0 18px;">签署时间：'+d.signTime+'</p>'+
+    '<div style="height:2px;background:#C53030;margin:0 0 20px;"></div>'+
+    '<div style="display:flex;gap:20px;margin-bottom:14px;"><div style="flex:1;"><p style="margin:0 0 3px;font-size:12px;font-weight:700;color:#C53030;">甲方（出租方 / 房东）</p><p style="margin:0 0 2px;font-size:12px;">姓名：'+d.landlord+'</p><p style="margin:0 0 2px;font-size:12px;">身份证号：'+d.landlordId+'</p><p style="margin:0;font-size:12px;">电话：'+d.llphone+'</p><p style="margin:0;font-size:12px;">联系电话：'+d.llphoneId+'</p></div><div style="flex:1;"><p style="margin:0 0 3px;font-size:12px;font-weight:700;color:#B7791F;">乙方（承租方 / 租客）</p><p style="margin:0 0 2px;font-size:12px;">姓名：'+d.tenant+'</p><p style="margin:0 0 2px;font-size:12px;">身份证号：'+d.tenantId+'</p><p style="margin:0;font-size:12px;">电话：'+d.tphone+'</p><p style="margin:0;font-size:12px;">联系电话：'+d.tphoneId+'</p></div></div>'+
+    '<p style="margin:0 0 3px;font-size:12px;"><strong>房屋地址：</strong>'+d.address+'</p>'+
+    '<p style="margin:0 0 12px;font-size:12px;"><strong>租赁期限：</strong>'+d.startDate+' 至 '+d.endDate+'</p>'+
+    buildDocBody()+
+    '<div style="margin-top:28px;display:flex;justify-content:space-between;align-items:flex-end;"><div><p style="margin:0 0 3px;font-size:12px;font-weight:600;">甲方签名：</p>'+sigHTML+'<p style="margin:6px 0 0;font-size:11px;color:#8C8078;">日期：'+d.signDate+'</p></div><div style="text-align:right;"><p style="margin:0 0 3px;font-size:12px;font-weight:600;">乙方签名：</p><p style="margin:0;font-size:11px;color:#8C8078;">（待签署）</p><p style="margin:6px 0 0;font-size:11px;color:#8C8078;">日期：____年____月____日</p></div></div>'+
+    '<div style="margin-top:30px;border-top:2px solid #E8E0D8;padding-top:14px;"><p style="margin:0 0 6px;font-size:13px;font-weight:700;">附件：证件照片</p>'+photoHTML+'</div>'+
+    '<div style="margin-top:24px;text-align:center;"><div style="display:inline-block;border:3px solid #C53030;color:#C53030;padding:8px 18px;border-radius:8px;font-size:16px;font-weight:900;transform:rotate(-8deg);opacity:.7;letter-spacing:6px;">已签署</div></div>'+
+    '</div></div>';
+}
+
+function showResultPage(d){document.getElementById('gen-loading').style.display='none';document.getElementById('main-page').classList.add('hidden');document.getElementById('result-img').src=state.resultImageURL;document.getElementById('result-time').textContent=d.signTime;if(state.isWechat){document.getElementById('save-tip-wechat').classList.remove('hidden');document.getElementById('btn-download-pdf').classList.add('hidden');}else{document.getElementById('save-tip-browser').classList.remove('hidden');}document.getElementById('result-info').innerHTML='<div class="flex justify-between py-1.5 border-b border-warm-100"><span class="text-warm-400">房屋地址</span><span class="font-medium text-right flex-1 ml-4 truncate">'+d.address+'</span></div><div class="flex justify-between py-1.5 border-b border-warm-100"><span class="text-warm-400">甲方</span><span class="font-medium">'+d.landlord+'</span></div><div class="flex justify-between py-1.5 border-b border-warm-100"><span class="text-warm-400">乙方</span><span class="font-medium">'+d.tenant+'</span></div><div class="flex justify-between py-1.5"><span class="text-warm-400">签署时间</span><span class="font-medium">'+d.signTime+'</span></div>';document.getElementById('result-page').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});showToast('签署凭证已生成','success');}
+
+function downloadPDF(){if(!state.pdfCanvas){showToast('请先完成签署','error');return;}try{var d=state.formData;var pdf=new jspdf.jsPDF('p','mm','a4');var pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),margin=5,contentW=pageW-margin*2;var slicePx=Math.floor((pageH-margin*2)/contentW*state.pdfCanvas.width);var total=Math.ceil(state.pdfCanvas.height/slicePx);for(var p=0;p<total;p++){if(p>0)pdf.addPage();var srcY=p*slicePx,srcH=Math.min(slicePx,state.pdfCanvas.height-srcY),dstH=srcH*contentW/state.pdfCanvas.width;var pc=document.createElement('canvas');pc.width=state.pdfCanvas.width;pc.height=srcH;var pctx=pc.getContext('2d');pctx.fillStyle='#fff';pctx.fillRect(0,0,pc.width,pc.height);pctx.drawImage(state.pdfCanvas,0,srcY,state.pdfCanvas.width,srcH,0,0,state.pdfCanvas.width,srcH);pdf.addImage(pc.toDataURL('image/jpeg',0.92),'JPEG',margin,margin,contentW,dstH);}pdf.save('安全责任书_'+d.landlord+'.pdf');showToast('PDF已下载','success');}catch(e){showToast('PDF下载失败','error');}}
+
+function redo(){state.docScrolled=false;state.sigDrawn=false;state.signatureData=null;state.uploadedFiles={};state.formData={};state.resultImageURL=null;state.pdfCanvas=null;document.getElementById('result-page').classList.add('hidden');document.getElementById('main-page').classList.remove('hidden');['f-address','f-landlord','f-landlord-id','f-llphone','f-llphone-id','f-tenant','f-tenant-id','f-tphone','f-tphone-id','f-start','f-end'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('doc-read-check').checked=false;document.getElementById('agree-check').checked=false;var ss=document.getElementById('scroll-status');ss.innerHTML='<i class="fa-solid fa-arrow-down mr-1"></i>请先滚动阅读完整份责任书';ss.style.background='#FEF2F2';ss.style.color='#C53030';clearSignature();renderUploadSections();renderDocText();checkCanSubmit();window.scrollTo({top:0,behavior:'smooth'});}
+
+function showToast(msg,type){type=type||'info';var el=document.getElementById('toast');el.textContent=msg;el.className='toast-box '+type+' show';setTimeout(function(){el.classList.remove('show');},3000);}
+</script>
+</body>
+</html>
